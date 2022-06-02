@@ -2,10 +2,16 @@
 
 WORKDIR=$PWD
 
-# Go into the directory and build sqlcipher
-cd sqlcipher || exit 1
+if [[ -d "/tmp/pybuild/" ]]; then
+    echo "Warning /tmp/pybuild exists"
+    exit 1
+fi
 
+# Go into the directory and build sqlcipher
 echo "Compiling sqlcipher";
+mkdir -p /tmp/pybuild/sqlcipher
+cp -R sqlcipher /tmp/pybuild
+cd /tmp/pybuild//sqlcipher/ || exit 1
 
 ./configure \
   --enable-tempstore=yes \
@@ -14,23 +20,14 @@ echo "Compiling sqlcipher";
 
 make
 
-cd .. || exit 1
-
-mkdir -p /tmp/pybuild/sqlcipher
-cp -R sqlcipher /tmp/pybuild
-
-ls -la /tmp/pybuild/sqlcipher/.libs
-
-cd pysqlcipher3 || exit 1
-
-if [ -z "$(git status --porcelain)" ];
-then
-    echo "Applying setup patch"
-    git apply ../patches/pysqlcipher3_linux.diff
-fi
-
+cd "$WORKDIR" || exit 1
+cp -R pysqlcipher3 /tmp/pybuild
+cd /tmp/pybuild/pysqlcipher3 || exit 1
+echo "Applying pysqlcipher3 setup patch"
+patch < "$WORKDIR/patches/pysqlcipher3_linux.diff"
 
 echo "Copying libcrypto"
+
 if [[ -f /usr/lib/libcrypto.so.1.1 ]]; then
   cp /usr/lib/libcrypto.so.1.1 ../pysqlcipher3
 elif [[ -f /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ]]; then
