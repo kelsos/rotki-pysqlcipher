@@ -24,6 +24,8 @@ jobs:
           submodules: true
       - name: Set up python
         uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
         if: runner.os != 'MacOS'
       - name: Set up python
         run: ./setup-osx.sh

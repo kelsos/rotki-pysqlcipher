@@ -1,6 +1,3 @@
-#sudo apt-get update
-#sudo apt-get install libxml2-utils
-
 echo "Preparing to compile sqlcipher";
 # Go into the directory and build sqlcipher
 cd sqlcipher || exit 1
@@ -20,5 +17,5 @@ then
     git apply ../patches/pysqlcipher3_linux.diff
 fi
 
-cp ./libs/libsqlcipher.so ../pysqlcipher3
+cp ..sqlcipher/.libs/libsqlcipher.so ../pysqlcipher3
 cp /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ../pysqlcipher
