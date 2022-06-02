@@ -40,7 +40,6 @@ jobs:
         working-directory: /tmp/pybuild/pysqlcipher3
         run: python3 -m pip install --upgrade build && python -m build
       - uses: actions/upload-artifact@v3
-        working-directory: /tmp/pybuild/pysqlcipher3
         with:
           name: packages
-          path: dist
+          path: /tmp/pybuild/pysqlcipher3/dist
