@@ -19,6 +19,8 @@ cd .. || exit 1
 mkdir -p /tmp/pybuild/sqlcipher
 cp -R sqlcipher /tmp/pybuild
 
+ls -la /tmp/pybuild/sqlcipher/.libs
+
 cd pysqlcipher3 || exit 1
 
 if [ -z "$(git status --porcelain)" ];
