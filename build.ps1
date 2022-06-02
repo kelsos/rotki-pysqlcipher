@@ -16,22 +16,16 @@ if ($Env:CI) {
     echo "::group::Setup Build dependencies"
 }
 
-if ($Env:CI) {
-    cd ~\
-} else {
-    cd ..
-}
-
-if (-not (Test-Path tmp\$TCLTK -PathType Container)) {
+if (-not (Test-Path build\$TCLTK -PathType Container)) {
     echo "Setting up TCL/TK $TCLTK"
-    tar -xf "rotki-win-build\$TCLTK.tgz" tmp
+    tar -xf "rotki-win-build\$TCLTK.tgz" -C build
     ExitOnFailure("Failed to untar tcl/tk")
 }
 
 if ($Env:CI) {
-    echo "::addpath::$PWD\tmp\$TCLTK\bin"
+    echo "::addpath::$PWD\build\$TCLTK\bin"
 } else {
-    $env:Path += ";$PWD\tmp\$TCLTK\bin"
+    $env:Path += ";$PWD\build\$TCLTK\bin"
 }
 
 if ($Env:CI) {
@@ -44,7 +38,7 @@ $SQLCIPHER_DIR = $PWD
 
 if (-not (git status --porcelain)) {
     echo "Applying Makefile patch for SQLCipher"
-    git apply $PROJECT_DIR\packaging\sqlcipher_win.diff
+    git apply $PROJECT_DIR\patches\sqlcipher_win.diff
     ExitOnFailure("Failed to apply the Makefile patch for SQLCipher")
 }
 
@@ -115,14 +109,14 @@ if ($Env:CI) {
     echo "::group::Setup PySQLCipher"
 }
 
-cd $BUILD_DEPS_DIR
+cd $PROJECT_DIR
 
 cd pysqlcipher3
 $PYSQLCIPHER3_DIR = $PWD
 
 if (-not (git status --porcelain)) {
     echo "Applying setup patch"
-    git apply $PROJECT_DIR\packaging\pysqlcipher3_win.diff
+    git apply $PROJECT_DIR\patches\pysqlcipher3_win.diff
     ExitOnFailure("Failed to apply pysqlcipher3 patch")
 }
 
