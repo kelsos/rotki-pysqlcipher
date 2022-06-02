@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+
+WORKDIR=$PWD
+
 echo "Preparing to compile sqlcipher";
 # Go into the directory and build sqlcipher
 cd sqlcipher || exit 1
@@ -9,7 +13,12 @@ cd sqlcipher || exit 1
 
 make
 
-cd ../pysqlcipher3 || exit 1
+cd .. || exit 1
+
+mkdir -p /tmp/pybuild/sqlcipher
+cp -R sqlcipher /tmp/pybuild
+
+cd pysqlcipher3 || exit 1
 
 if [ -z "$(git status --porcelain)" ];
 then
@@ -17,7 +26,6 @@ then
     git apply ../patches/pysqlcipher3_linux.diff
 fi
 
-cp ../sqlcipher/.libs/libsqlcipher.so ../pysqlcipher3
 
 if [[ -f /usr/lib/libcrypto.so.1.1 ]]; then
   cp /usr/lib/libcrypto.so.1.1 ../pysqlcipher3

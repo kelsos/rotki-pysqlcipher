@@ -11,8 +11,8 @@ diff --git a/setup.py b/setup.py
          ext_modules=[Extension(
              name=PACKAGE_NAME + EXTENSION_MODULE_NAME,
              sources=sources,
-+            library_dirs=[r'../sqlcipher'],
-+            include_dirs = [r'../sqlcipher/src'],
++            library_dirs=[r'/tmp/pybuild/sqlcipher/.libs'],
++            include_dirs = [r'/tmp/pybuild'],
              define_macros=define_macros)
          ],
          classifiers=[
