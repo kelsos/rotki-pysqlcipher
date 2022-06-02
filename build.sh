@@ -2,9 +2,10 @@
 
 WORKDIR=$PWD
 
-echo "Preparing to compile sqlcipher";
 # Go into the directory and build sqlcipher
 cd sqlcipher || exit 1
+
+echo "Compiling sqlcipher";
 
 ./configure \
   --enable-tempstore=yes \
@@ -27,6 +28,7 @@ then
 fi
 
 
+echo "Copying libcrypto"
 if [[ -f /usr/lib/libcrypto.so.1.1 ]]; then
   cp /usr/lib/libcrypto.so.1.1 ../pysqlcipher3
 elif [[ -f /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ]]; then
