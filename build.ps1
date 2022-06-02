@@ -116,7 +116,7 @@ $PYSQLCIPHER3_DIR = $PWD
 
 if (-not (git status --porcelain)) {
     echo "Applying setup patch"
-    git apply $PROJECT_DIR\patches\pysqlcipher3_win.diff
+    git apply --ignore-whitespace $PROJECT_DIR\patches\pysqlcipher3_win.diff
     ExitOnFailure("Failed to apply pysqlcipher3 patch")
 }
 
