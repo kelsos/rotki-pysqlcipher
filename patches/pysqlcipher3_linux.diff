@@ -6,7 +6,7 @@ diff --git a/setup.py b/setup.py
          package_dir={PACKAGE_NAME: "lib"},
          packages=packages,
 +        data_files=[
-+          (PACKAGE_NAME, ['libsqlcipher.so', 'libcrypto.so.1.1'])
++          (PACKAGE_NAME, ['libsqlcipher.so.0', 'libcrypto.so.1.1'])
 +        ],
          ext_modules=[Extension(
              name=PACKAGE_NAME + EXTENSION_MODULE_NAME,
