@@ -17,5 +17,7 @@ then
     git apply ../patches/pysqlcipher3_linux.diff
 fi
 
+cat setup.py
+
 cp ..sqlcipher/.libs/libsqlcipher.so ../pysqlcipher3
 cp /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ../pysqlcipher
