@@ -35,7 +35,7 @@ jobs:
         if: runner.os == 'Linux'
         run: ./build.sh
       - name: Build python package
-        work_directory: ./pysqlcipher3
+        working-directory: ./pysqlcipher3
         run: python3 -m pip install --upgrade build && python -m build
       - uses: actions/upload-artifact@v3
         with:

@@ -1,5 +1,5 @@
-sudo apt-get update
-sudo apt-get install libxml2-utils
+#sudo apt-get update
+#sudo apt-get install libxml2-utils
 
 echo "Preparing to compile sqlcipher";
 # Go into the directory and build sqlcipher
@@ -17,7 +17,7 @@ cd ../pysqlcipher3 || exit 1
 if [ -z "$(git status --porcelain)" ];
 then
     echo "Applying setup patch"
-    git apply ../patches/pysqlcipher3_win.diff
+    git apply ../patches/pysqlcipher3_linux.diff
 fi
 
 cp ./libs/libsqlcipher.so ../pysqlcipher3
