@@ -1,0 +1,18 @@
+diff --git a/setup.py b/setup.py
+--- a/setup.py	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
++++ b/setup.py	(date 1654185943633)
+@@ -162,9 +162,14 @@
+         url="https://github.com/rigglemania/pysqlcipher3",
+         package_dir={PACKAGE_NAME: "lib"},
+         packages=packages,
++        data_files=[
++          (PACKAGE_NAME, ['libsqlcipher.so', 'libcrypto.so.1.1'])
++        ],
+         ext_modules=[Extension(
+             name=PACKAGE_NAME + EXTENSION_MODULE_NAME,
+             sources=sources,
++            library_dirs=[r'../sqlcipher'],
++            include_dirs = [r'../'],
+             define_macros=define_macros)
+         ],
+         classifiers=[
