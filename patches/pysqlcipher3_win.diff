@@ -1,6 +1,6 @@
-gdiff --git a/setup.py b/setup.py
+diff --git a/setup.py b/setup.py
 --- a/setup.py	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
-+++ b/setup.py	(date 1643291122131)
++++ b/setup.py	(date 1654188418132)
 @@ -66,10 +66,10 @@
 
 
@@ -19,7 +19,7 @@ gdiff --git a/setup.py b/setup.py
          package_dir={PACKAGE_NAME: "lib"},
          packages=packages,
 +        data_files=[
-+            (PACKAGE_NAME, ['sqlcipher.dll', 'libcrypto-1_1-x64.dll'])
++          (PACKAGE_NAME, ['sqlcipher.dll', 'libcrypto-1_1-x64.dll'])
 +        ],
          ext_modules=[Extension(
              name=PACKAGE_NAME + EXTENSION_MODULE_NAME,
