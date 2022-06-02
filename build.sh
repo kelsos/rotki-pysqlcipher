@@ -20,5 +20,5 @@ then
     git apply ../patches/pysqlcipher3_win.diff
 fi
 
-cp .libs/libsqlcipher.so ../pysqlcipher3
+cp ./libs/libsqlcipher.so ../pysqlcipher3
 cp /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ../pysqlcipher
