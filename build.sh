@@ -18,4 +18,14 @@ then
 fi
 
 cp ../sqlcipher/.libs/libsqlcipher.so ../pysqlcipher3
-cp /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ../pysqlcipher
+
+if [[ -f /usr/lib/libcrypto.so.1.1 ]]; then
+  cp /usr/lib/libcrypto.so.1.1 ../pysqlcipher3
+elif [[ -f /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ]]; then
+  cp /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 ../pysqlcipher3
+else
+  echo "no libcrypto detected"
+  exit 1
+fi
+
+
