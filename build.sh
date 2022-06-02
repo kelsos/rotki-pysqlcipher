@@ -26,6 +26,9 @@ cd /tmp/pybuild/pysqlcipher3 || exit 1
 echo "Applying pysqlcipher3 setup patch"
 patch < "$WORKDIR/patches/pysqlcipher3_linux.diff"
 
+echo "Copying libsqlcipher"
+cp /tmp/pybuild/sqlcipher/.libs/libsqlcipher.so /tmp/pybuild/pysqlcipher3/
+
 echo "Copying libcrypto"
 
 if [[ -f /usr/lib/libcrypto.so.1.1 ]]; then
