@@ -1,0 +1,36 @@
+name: Build
+on:
+  - push
+  - pull_request
+
+jobs:
+  build:
+    name: 'Build on ${{ matrix.os }}'
+    runs-on: '${{ matrix.os }}'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-18.04
+          - windows-2019
+          - macOS-11
+        python-version:
+          - 3.9.13
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up python
+        uses: actions/setup-python@v3
+        if: runner.os != 'MacOS'
+      - name: Set up python
+        run: ./setup-osx.sh
+        if: runner.os == 'MacOS'
+      - name: Build SQLCipher
+        if: runner.os == 'Windows'
+        run: ./build.ps1
+      - name: Build SQLCipher
+        if: runner.os == 'Linux'
+        run: ./build.sh
