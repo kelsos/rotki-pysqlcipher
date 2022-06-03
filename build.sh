@@ -41,3 +41,4 @@ if [[ ! -d "$PYSQLCIPHER_DIR/includes/sqlcipher" ]]; then
 fi
 
 cp "$BUILDDIR/sqlcipher/sqlite3.h" "$PYSQLCIPHER_DIR/includes/sqlcipher"
+cp "$WORKDIR/openssl" "$PYSQLCIPHER_DIR"
