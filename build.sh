@@ -21,7 +21,7 @@ cd "$SQLCIPHER_DIR" || exit 1
   CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS" \
   LDFLAGS="-lcrypto"
 
-make sqlite3.c
+make sqlite3.c > /dev/null
 
 cd "$WORKDIR" || exit 1
 cp -R pysqlcipher3 "$BUILDDIR"
