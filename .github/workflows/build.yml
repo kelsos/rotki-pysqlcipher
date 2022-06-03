@@ -43,9 +43,9 @@ jobs:
         working-directory: /tmp/pybuild/pysqlcipher3/
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BEFORE_ALL: 'cd openssl && ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl CPPFLAGS="${MANYLINUX_CPPFLAGS}" CFLAGS="${MANYLINUX_CFLAGS} -fPIC" CXXFLAGS="${MANYLINUX_CXXFLAGS} -fPIC" LDFLAGS="${MANYLINUX_LDFLAGS} -fPIC" > /dev/null && make > /dev/null && make install_sw'CIBW_BEFORE_ALL='cd openssl && ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl CPPFLAGS="${MANYLINUX_CPPFLAGS}" CFLAGS="${MANYLINUX_CFLAGS} -fPIC" CXXFLAGS="${MANYLINUX_CXXFLAGS} -fPIC" LDFLAGS="${MANYLINUX_LDFLAGS} -fPIC" > /dev/null && make > /dev/null && make install_sw'
+          CIBW_BEFORE_ALL: cd openssl && ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl CPPFLAGS="${MANYLINUX_CPPFLAGS}" CFLAGS="${MANYLINUX_CFLAGS} -fPIC" CXXFLAGS="${MANYLINUX_CXXFLAGS} -fPIC" LDFLAGS="${MANYLINUX_LDFLAGS} -fPIC" > /dev/null && make > /dev/null && make install_sw'CIBW_BEFORE_ALL='cd openssl && ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl CPPFLAGS="${MANYLINUX_CPPFLAGS}" CFLAGS="${MANYLINUX_CFLAGS} -fPIC" CXXFLAGS="${MANYLINUX_CXXFLAGS} -fPIC" LDFLAGS="${MANYLINUX_LDFLAGS} -fPIC" > /dev/null && make > /dev/null && make install_sw
           CIBW_BUILD: cp39-*
-          CIBW_ARCHS_LINUX: "native aarch64"
+          CIBW_ARCHS_LINUX: native aarch64
       - uses: actions/upload-artifact@v3
         with:
           path: /tmp/pybuild/pysqlcipher3/wheelhouse/*.whl
