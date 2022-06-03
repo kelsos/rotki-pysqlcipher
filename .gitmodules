@@ -7,3 +7,6 @@
 [submodule "rotki-win-build"]
 	path = rotki-win-build
 	url = https://github.com/rotki/rotki-win-build.git
+[submodule "openssl"]
+	path = openssl
+	url = https://github.com/openssl/openssl.git

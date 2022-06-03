@@ -5,17 +5,18 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/setup.py b/setup.py
 --- a/setup.py	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
-+++ b/setup.py	(date 1654249640860)
-@@ -32,7 +32,7 @@
++++ b/setup.py	(date 1654261467391)
+@@ -31,8 +31,7 @@
+ from setuptools import Extension
 
  # If you need to change anything, it should be enough to change setup.cfg.
-
+-
 -PACKAGE_NAME = "pysqlcipher3"
 +PACKAGE_NAME = "rotki-pysqlcipher3"
  VERSION = '1.0.4'
  LONG_DESCRIPTION = \
  """Python interface to SQLCipher
-@@ -69,17 +69,10 @@
+@@ -69,17 +68,10 @@
      quote = '"' if sys.platform != 'win32' else '\\"'
      return quote + arg + quote
 
@@ -34,11 +35,12 @@ diff --git a/setup.py b/setup.py
  class AmalgationLibSQLCipherBuilder(build_ext):
      description = "Builds a C extension using a sqlcipher amalgamation"
 
-@@ -165,6 +158,7 @@
+@@ -165,6 +157,8 @@
          ext_modules=[Extension(
              name=PACKAGE_NAME + EXTENSION_MODULE_NAME,
              sources=sources,
-+            include_dirs=[r'/tmp/pybuild'],
++            library_dirs=[r'/usr/local/ssl/lib/'],
++            include_dirs=[r'./include', r'/usr/local/ssl/include/'],
              define_macros=define_macros)
          ],
          classifiers=[
@@ -59,3 +61,17 @@ diff --git a/setup.py b/setup.py
 +
  if __name__ == "__main__":
      main()
+Index: MANIFEST.in
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/MANIFEST.in b/MANIFEST.in
+--- a/MANIFEST.in	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
++++ b/MANIFEST.in	(date 1654261441588)
+@@ -7,3 +7,5 @@
+ include lib/test/*/*
+
+ global-exclude *~ *.pyc
++exclude include
++exclude openssl
