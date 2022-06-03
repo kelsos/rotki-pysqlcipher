@@ -45,6 +45,7 @@ jobs:
         env:
           CIBW_BEFORE_ALL: cd openssl && ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl CPPFLAGS="${MANYLINUX_CPPFLAGS}" CFLAGS="${MANYLINUX_CFLAGS} -fPIC" CXXFLAGS="${MANYLINUX_CXXFLAGS} -fPIC" LDFLAGS="${MANYLINUX_LDFLAGS} -fPIC" > /dev/null && make > /dev/null && make install_sw > /dev/null
           CIBW_BUILD: cp39-manylinux_x86_64 cp39-manylinux_aarch64
+          CIBW_ARCHS_LINUX: "native aarch64"
       - uses: actions/upload-artifact@v3
         with:
           path: /tmp/pybuild/pysqlcipher3/wheelhouse/*.whl
