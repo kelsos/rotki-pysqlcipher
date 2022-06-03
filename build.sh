@@ -36,9 +36,9 @@ fi
 cp "$BUILDDIR/sqlcipher/sqlite3.c" $BUILDDIR/pysqlcipher3/amalgamation
 cp "$BUILDDIR/sqlcipher/sqlite3.h" $BUILDDIR/pysqlcipher3/amalgamation
 
-if [[ ! -d "$PYSQLCIPHER_DIR/includes/sqlcipher" ]]; then
-  mkdir -p "$PYSQLCIPHER_DIR/includes/sqlcipher"
+if [[ ! -d "$PYSQLCIPHER_DIR/include/sqlcipher" ]]; then
+  mkdir -p "$PYSQLCIPHER_DIR/include/sqlcipher"
 fi
 
-cp "$BUILDDIR/sqlcipher/sqlite3.h" "$PYSQLCIPHER_DIR/includes/sqlcipher"
+cp "$BUILDDIR/sqlcipher/sqlite3.h" "$PYSQLCIPHER_DIR/include/sqlcipher"
 cp -R "$WORKDIR/openssl" "$PYSQLCIPHER_DIR"
