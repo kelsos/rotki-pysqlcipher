@@ -35,12 +35,10 @@ mkdir -p "$SQLCIPHER_DIR"
 cp -R "$WORKDIR/sqlcipher" "$BUILDDIR"
 cd "$SQLCIPHER_DIR" || exit 1
 
-export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
-
 ./configure \
   --enable-tempstore=yes \
   CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -I/opt/homebrew/Cellar/openssl@1.1/1.1.1o/include" \
-  LDFLAGS="-L/opt/homebrew/Cellar/openssl@1.1/1.1.1o/lib"
+  LDFLAGS="/opt/homebrew/Cellar/openssl@1.1/1.1.1o/lib/libcrypto.a"
 
 make sqlite3.c > /dev/null
 
