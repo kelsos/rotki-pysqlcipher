@@ -37,6 +37,9 @@ cd "$SQLCIPHER_DIR" || exit 1
 
 ./configure \
   --enable-tempstore=yes \
+  --disable-shared \
+  --enable-static=yes \
+  --with-crypto-lib=none \
   CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -I/opt/homebrew/Cellar/openssl@1.1/1.1.1o/include" \
   LDFLAGS="/opt/homebrew/Cellar/openssl@1.1/1.1.1o/lib/libcrypto.a"
 
