@@ -1,18 +1,61 @@
+Index: setup.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
 diff --git a/setup.py b/setup.py
 --- a/setup.py	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
-+++ b/setup.py	(date 1654185943633)
-@@ -162,9 +162,14 @@
-         url="https://github.com/rigglemania/pysqlcipher3",
-         package_dir={PACKAGE_NAME: "lib"},
-         packages=packages,
-+        data_files=[
-+          (PACKAGE_NAME, ['libsqlcipher.so.0', 'libcrypto.so.1.1'])
-+        ],
++++ b/setup.py	(date 1654249640860)
+@@ -32,7 +32,7 @@
+
+ # If you need to change anything, it should be enough to change setup.cfg.
+
+-PACKAGE_NAME = "pysqlcipher3"
++PACKAGE_NAME = "rotki-pysqlcipher3"
+ VERSION = '1.0.4'
+ LONG_DESCRIPTION = \
+ """Python interface to SQLCipher
+@@ -69,17 +69,10 @@
+     quote = '"' if sys.platform != 'win32' else '\\"'
+     return quote + arg + quote
+
++
+ define_macros = [('MODULE_NAME', quote_argument(PACKAGE_NAME + '.dbapi2'))]
+
+
+-class SystemLibSQLCipherBuilder(build_ext):
+-    description = "Builds a C extension linking against libsqlcipher library"
+-
+-    def build_extension(self, ext):
+-        log.info(self.description)
+-        build_ext.build_extension(self, ext)
+-
+-
+ class AmalgationLibSQLCipherBuilder(build_ext):
+     description = "Builds a C extension using a sqlcipher amalgamation"
+
+@@ -165,6 +158,7 @@
          ext_modules=[Extension(
              name=PACKAGE_NAME + EXTENSION_MODULE_NAME,
              sources=sources,
-+            library_dirs=[r'/tmp/pybuild/sqlcipher/.libs'],
-+            include_dirs = [r'/tmp/pybuild'],
++            include_dirs=[r'/tmp/pybuild'],
              define_macros=define_macros)
          ],
          classifiers=[
+@@ -179,8 +173,7 @@
+             "Topic :: Database :: Database Engines/Servers",
+             "Topic :: Software Development :: Libraries :: Python Modules"],
+         cmdclass={
+-            "build_amalgamation": AmalgationLibSQLCipherBuilder,
+-            "build_ext": SystemLibSQLCipherBuilder
++            "build_ext": AmalgationLibSQLCipherBuilder,
+         }
+     )
+
+@@ -191,5 +184,6 @@
+     except BaseException as ex:
+         log.info(str(ex))
+
++
+ if __name__ == "__main__":
+     main()

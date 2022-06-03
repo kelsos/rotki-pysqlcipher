@@ -36,10 +36,20 @@ jobs:
       - name: Build SQLCipher
         if: runner.os == 'Linux'
         run: ./build.sh
-      - name: Build python package
-        working-directory: /tmp/pybuild/pysqlcipher3
-        run: python3 -m pip install --upgrade build && python -m build
+      - name: Build sdist
+        working_directory: /tmp/pybuild/pysqlcipher3/
+        run: python3 -m pip install --upgrade build && python -m build -s
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: dist/*.tar.gz
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.6.0
+      - name: Build wheels
+        working_directory: /tmp/pybuild/pysqlcipher3/
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD: cp39-macosx_universal2 cp39-win_amd64 cp39-manylinux_x86_64 cp39-musllinux_x86_64 cp39-manylinux_aarch64 cp39-musllinux_aarch64
       - uses: actions/upload-artifact@v3
         with:
-          name: packages
-          path: /tmp/pybuild/pysqlcipher3/dist
+          path: ./wheelhouse/*.whl
