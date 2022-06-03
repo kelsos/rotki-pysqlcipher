@@ -4,18 +4,9 @@ on:
   - pull_request
 
 jobs:
-  build:
-    name: 'Build on ${{ matrix.os }}'
-    runs-on: '${{ matrix.os }}'
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-18.04
-        python-version:
-          - 3.9.13
-
+  build_macos:
+    name: 'Buidling on macos'
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v3
         with:
@@ -23,29 +14,62 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9.13
       - name: prepare sqlcipher amalgamation
-        run: ./build.sh
-      - name: Build sdist
-        working-directory: /tmp/pybuild/pysqlcipher3/
-        run: python3 -m pip install --upgrade build && python -m build -s
-      - name: Store artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          path: /tmp/pybuild/pysqlcipher3/dist/*.tar.gz
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
+        run: ./prepare-osx.sh
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==2.6.0
       - name: Build wheels
         working-directory: /tmp/pybuild/pysqlcipher3/
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BEFORE_ALL: cd openssl && ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl CPPFLAGS="${MANYLINUX_CPPFLAGS}" CFLAGS="${MANYLINUX_CFLAGS} -fPIC" CXXFLAGS="${MANYLINUX_CXXFLAGS} -fPIC" LDFLAGS="${MANYLINUX_LDFLAGS} -fPIC" > /dev/null && make > /dev/null && make install_sw > /dev/null
-          CIBW_BUILD: cp39-manylinux_x86_64 cp39-manylinux_aarch64
-          CIBW_ARCHS_LINUX: "native aarch64"
+          CIBW_BUILD: cp39-macosx_universal2
+          CIBW_ARCHS_MACOS: "universal2"
       - uses: actions/upload-artifact@v3
         with:
           path: /tmp/pybuild/pysqlcipher3/wheelhouse/*.whl
+
+#  build:
+#    name: 'Build on ${{ matrix.os }}'
+#    runs-on: '${{ matrix.os }}'
+#
+#    strategy:
+#      matrix:
+#        os:
+#          - ubuntu-18.04
+#        python-version:
+#          - 3.9.13
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          submodules: true
+#      - name: Set up python
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: prepare sqlcipher amalgamation
+#        run: ./build.sh
+#      - name: Build sdist
+#        working-directory: /tmp/pybuild/pysqlcipher3/
+#        run: python3 -m pip install --upgrade build && python -m build -s
+#      - name: Store artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          path: /tmp/pybuild/pysqlcipher3/dist/*.tar.gz
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v2
+#        with:
+#          platforms: arm64
+#      - name: Install cibuildwheel
+#        run: python -m pip install cibuildwheel==2.6.0
+#      - name: Build wheels
+#        working-directory: /tmp/pybuild/pysqlcipher3/
+#        run: python -m cibuildwheel --output-dir wheelhouse
+#        env:
+#          CIBW_BEFORE_ALL: cd openssl && ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl CPPFLAGS="${MANYLINUX_CPPFLAGS}" CFLAGS="${MANYLINUX_CFLAGS} -fPIC" CXXFLAGS="${MANYLINUX_CXXFLAGS} -fPIC" LDFLAGS="${MANYLINUX_LDFLAGS} -fPIC" > /dev/null && make > /dev/null && make install_sw > /dev/null
+#          CIBW_BUILD: cp39-manylinux_x86_64 cp39-manylinux_aarch64
+#          CIBW_ARCHS_LINUX: "native aarch64"
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          path: /tmp/pybuild/pysqlcipher3/wheelhouse/*.whl
