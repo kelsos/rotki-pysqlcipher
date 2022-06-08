@@ -41,10 +41,10 @@ jobs:
           name: "openssl-macos-${{ matrix.ARCH.ARTIFACT_NAME }}"
           path: artifact/
 
-  universal2:
+  build_universal2:
     runs-on: macos-11
     name: "Build OpenSSL for macOS universal2"
-    needs: [ build ]
+    needs: [ build_openssl ]
     steps:
       - uses: actions/download-artifact@v3
         with:
