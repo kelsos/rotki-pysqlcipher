@@ -5,7 +5,12 @@ WORKDIR=$PWD
 echo $_PYTHON_HOST_PLATFORM
 echo $ARCH
 
-cp -R "openssl-$ARCH" openssl
+ARCH_POSTFIX=$ARCH
+if [[ $ARCH == 'x86_64' ]]; then
+  ARCH_POSTFIX="x64-64"
+fi
+
+cp -R "openssl-$ARCH_POSTFIX" openssl
 
 cd "sqlcipher" || exit 1
 
