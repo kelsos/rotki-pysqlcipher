@@ -15,19 +15,19 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.9.13
-      - name: prepare sqlcipher amalgamation
-        run: ./prepare-osx.sh
+      - name: prepare build directory
+        run: ./scripts/prepare.sh
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==2.6.0
       - name: Build wheels
         working-directory: /tmp/pybuild/pysqlcipher3/
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: cp39-macosx_universal2
-          CIBW_ARCHS_MACOS: "universal2"
+          CIBW_BUILD: cp39-macosx_*
+          CIBW_BEFORE_BUILD: ./build
       - uses: actions/upload-artifact@v3
         with:
-          path: /tmp/pybuild/pysqlcipher3/wheelhouse/*.whl
+          path: /tmp/pybuild/wheelhouse/*.whl
 
 #  build:
 #    name: 'Build on ${{ matrix.os }}'
