@@ -24,7 +24,7 @@ jobs:
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BUILD: cp39-macosx_*
-          CIBW_BEFORE_BUILD: ./build
+          CIBW_BEFORE_BUILD: ./build.sh
       - uses: actions/upload-artifact@v3
         with:
           path: /tmp/pybuild/wheelhouse/*.whl
