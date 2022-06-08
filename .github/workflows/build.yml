@@ -90,15 +90,15 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: openssl-macos-x86-64
-          path: openssl-x86-64
+          path: openssl-macos-x86_64
       - uses: actions/download-artifact@v3
         with:
           name: openssl-macos-arm64
-          path: openssl-arm64
+          path: openssl-macos-arm64
       - uses: actions/download-artifact@v3
         with:
           name: openssl-macos-universal2
-          path: openssl-universal2
+          path: openssl-macos-universal2
       - name: prepare build directory
         run: ./scripts/prepare.sh
       - name: Install cibuildwheel
