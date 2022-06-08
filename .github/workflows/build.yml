@@ -26,6 +26,7 @@ jobs:
           submodules: true
       - name: Build OpenSSL
         run: |
+          BASEDIR=$(pwd)
           cd openssl
           perl ./Configure \
               --prefix="${BASEDIR}/artifact" \
