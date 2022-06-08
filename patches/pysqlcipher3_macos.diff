@@ -74,5 +74,5 @@ diff --git a/MANIFEST.in b/MANIFEST.in
 
  global-exclude *~ *.pyc
 +exclude include
-+exclude openssl
++exclude openssl*
 +exclude build.sh

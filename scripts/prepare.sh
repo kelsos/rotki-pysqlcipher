@@ -24,3 +24,17 @@ cd "$BUILD_DIR" || exit 1
 echo "Applying pysqlcipher3 setup patch"
 patch < "$SOURCE_DIR/patches/pysqlcipher3_macos.diff"
 
+if [[ -d "$SOURCE_DIR/openssl-arm64" ]]; then
+  echo "Copying arm64 OpenSSL"
+  cp -R "$SOURCE_DIR/openssl-arm64" "$BUILD_DIR/"
+fi
+
+if [[ -d "$SOURCE_DIR/openssl-universal2" ]]; then
+  echo "Copying universal2 OpenSSL"
+  cp -R "$SOURCE_DIR/openssl-universal2" "$BUILD_DIR/"
+fi
+
+if [[ -d "$SOURCE_DIR/openssl-x86-64" ]]; then
+  echo "Copying x86_64 OpenSSL"
+  cp -R "$SOURCE_DIR/openssl-x86-64" "$BUILD_DIR/"
+fi

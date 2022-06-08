@@ -5,7 +5,9 @@ WORKDIR=$PWD
 echo $_PYTHON_HOST_PLATFORM
 echo $ARCH
 
-cd "$WORKDIR/sqlcipher" || exit 1
+cp -R "openssl-$ARCH" openssl
+
+cd "sqlcipher" || exit 1
 
 echo "Creating SQLCipher amalgamation"
 
