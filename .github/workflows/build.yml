@@ -78,6 +78,7 @@ jobs:
   build_macos:
     name: 'Buidling on macos'
     runs-on: macos-11
+    needs: [ build_universal2 ]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -86,6 +87,21 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.9.13
+      - uses: actions/download-artifact@v3
+        with:
+          name: openssl-macos-x86-64
+          path: x86-64
+      - uses: actions/download-artifact@v3
+        with:
+          name: openssl-macos-arm64
+          path: arm64
+      - uses: actions/download-artifact@v3
+        with:
+          name: openssl-macos-universal2
+          path: universal2
+      - run: |
+          ls -la universal2
+
       - name: prepare build directory
         run: ./scripts/prepare.sh
       - name: Install cibuildwheel

@@ -2,19 +2,8 @@
 
 ARCH="$(uname -m)"
 WORKDIR=$PWD
-
-echo "Building OpenSSL"
-cd openssl || exit 1
-
-if [[ $ARCH == "arm64" ]]; then
-  export MACOSX_DEPLOYMENT_TARGET=11.0
-  ./Configure enable-rc5 zlib darwin64-arm64-cc no-asm no-shared> /dev/null
-else
-  export MACOSX_DEPLOYMENT_TARGET=10.9
-  ./Configure darwin64-x86_64-cc no-shared > /dev/null
-fi
-
-make > /dev/null
+echo $_PYTHON_HOST_PLATFORM
+echo $ARCH
 
 cd "$WORKDIR/sqlcipher" || exit 1
 
