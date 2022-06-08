@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+printenv
+
 WORKDIR=$PWD
 BUILDDIR=/tmp/pybuild
 SQLCIPHER_DIR="$BUILDDIR/sqlcipher"
