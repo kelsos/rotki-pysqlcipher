@@ -46,7 +46,7 @@ jobs:
 
   build_universal2:
     runs-on: macos-11
-    name: "Build OpenSSL for macOS universal2"
+    name: "Build OpenSSL for macOS (universal2)"
     needs: [ build_openssl ]
     steps:
       - uses: actions/download-artifact@v3
@@ -76,7 +76,7 @@ jobs:
 
 
   build_macos:
-    name: 'Buidling on macos'
+    name: 'Building pysqlcipher3 wheels for macOS'
     runs-on: macos-11
     needs: [ build_universal2 ]
     steps:
@@ -87,6 +87,7 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.9.13
+          cache: 'pip'
       - uses: actions/download-artifact@v3
         with:
           name: openssl-macos-x86-64
