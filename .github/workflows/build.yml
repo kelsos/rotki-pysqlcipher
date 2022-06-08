@@ -4,31 +4,99 @@ on:
   - pull_request
 
 jobs:
-  build_macos:
-    name: 'Buidling on macos'
+  build_openssl:
     runs-on: macos-11
+    strategy:
+      matrix:
+        ARCH:
+          - NAME: x86_64
+            ARTIFACT_NAME: x86-64
+            CFLAGS: "-mmacosx-version-min=10.09 -march=core2"
+            OPENSSLDIR: "/usr/local/etc/openssl@1.1"
+            FLAGS: no-shared -fPIC -fstack-protector-all
+          - NAME: arm64
+            ARTIFACT_NAME: arm64
+            CFLAGS: "-mmacosx-version-min=11.0"
+            OPENSSLDIR: "/opt/homebrew/etc/openssl@1.1"
+            FLAGS: no-shared enable-rc5 zlib no-asm -fPIC -fstack-protector-all
+    name: "Build OpenSSL for macOS (${{ matrix.ARCH.NAME }})"
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - name: Set up python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9.13
-      - name: prepare build directory
-        run: ./scripts/prepare.sh
-      - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.6.0
-      - name: Build wheels
-        working-directory: /tmp/pybuild
-        run: python -m cibuildwheel --output-dir wheelhouse
+      - name: Build OpenSSL
+        run: |
+          cd openssl
+          perl ./Configure \
+              --prefix="${BASEDIR}/artifact" \
+              --openssldir=${{ matrix.ARCH.OPENSSLDIR }} \
+              darwin64-${{ matrix.ARCH.NAME }}-cc \
+              ${{ matrix.ARCH.FLAGS }}
+          
+          make -j$(sysctl -n hw.logicalcpu)
+          make install_sw
         env:
-          CIBW_BUILD: cp39-*
-          CIBW_ARCHS_MACOS: x86_64 arm64 universal2
-          CIBW_BEFORE_BUILD_MACOS: ./build.sh
+          CFLAGS: ${{ matrix.ARCH.CFLAGS }}
+
       - uses: actions/upload-artifact@v3
         with:
-          path: /tmp/pybuild/wheelhouse/*.whl
+          name: "openssl-macos-${{ matrix.ARCH.ARTIFACT_NAME }}"
+          path: artifact/
+
+  universal2:
+    runs-on: macos-11
+    name: "Build OpenSSL for macOS universal2"
+    needs: [ build ]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: openssl-macos-x86-64
+          path: x86-64
+      - uses: actions/download-artifact@v3
+        with:
+          name: openssl-macos-arm64
+          path: arm64
+      - name: Create universal2 OpenSSL
+        run: |
+          mkdir artifact
+          cd artifact
+          mkdir bin lib
+          cp -r ../x86-64/include .
+          cp -r ../x86-64/lib/pkgconfig lib/
+          cp ../x86-64/bin/c_rehash bin/  # c_rehash is a perl script
+          lipo -create -output bin/openssl ../x86-64/bin/openssl ../arm64/bin/openssl
+          lipo -create -output lib/libssl.a ../x86-64/lib/libssl.a ../arm64/lib/libssl.a
+          lipo -create -output lib/libcrypto.a ../x86-64/lib/libcrypto.a ../arm64/lib/libcrypto.a
+      - uses: actions/upload-artifact@v3
+        with:
+          name: "openssl-macos-universal2"
+          path: artifact/
+
+
+
+#  build_macos:
+#    name: 'Buidling on macos'
+#    runs-on: macos-11
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          submodules: true
+#      - name: Set up python
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: 3.9.13
+#      - name: prepare build directory
+#        run: ./scripts/prepare.sh
+#      - name: Install cibuildwheel
+#        run: python -m pip install cibuildwheel==2.6.0
+#      - name: Build wheels
+#        working-directory: /tmp/pybuild
+#        run: python -m cibuildwheel --output-dir wheelhouse
+#        env:
+#          CIBW_BUILD: cp39-*
+#          CIBW_ARCHS_MACOS: x86_64 arm64 universal2
+#          CIBW_BEFORE_BUILD_MACOS: ./build.sh
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          path: /tmp/pybuild/wheelhouse/*.whl
 
 #  build:
 #    name: 'Build on ${{ matrix.os }}'
