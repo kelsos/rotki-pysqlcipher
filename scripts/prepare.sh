@@ -28,12 +28,13 @@ echo "Copying $BUILD_PLATFORM/build.sh"
 
 cp "$SOURCE_DIR/scripts/$BUILD_PLATFORM/build.sh" "$BUILD_DIR"
 
-cd "$BUILD_DIR" || exit 1
-
-
 echo "Preparing pysqlcipher3 setup patch"
+
+cd "$SOURCE_DIR/patches" || exit
 pip install -r requirements.txt
-"$SOURCE_DIR/patches/patch-gen.py" --platform "$BUILD_PLATFORM" --version "$LIB_VERSION"
+./patch-gen.py --platform "$BUILD_PLATFORM" --version "$LIB_VERSION"
+
+cd "$BUILD_DIR" || exit 1
 
 patch < "$SOURCE_DIR/patches/pysqlcipher3.diff"
 

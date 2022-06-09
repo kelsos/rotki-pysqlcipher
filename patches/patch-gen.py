@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from pathlib import Path
 
 import click
 from jinja2 import Template
@@ -29,6 +30,11 @@ openssl = {
 )
 @click.option('--version')
 def generate_patch(platform, version: str):
+    diff = Path('pysqlcipher3.diff')
+
+    if diff.exists():
+        diff.unlink()
+
     with open('pysqlcipher3.diff.j2') as f:
         template = Template(f.read())
         openssl_paths = openssl.get(platform)
