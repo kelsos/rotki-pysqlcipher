@@ -16,11 +16,31 @@ echo "Copying submodules to $BUILD_DIR"
 cp -R "$PYSQLCIPHER_DIR" "$BUILD_DIR"
 cp -R "$SQLCIPHER_DIR" "$BUILD_DIR/"
 
-cp "$SOURCE_DIR/scripts/mac/build.sh" "$BUILD_DIR"
+BUILD_OS=$(uname -s)
+
+if [[ $BUILD_OS == 'Linux' ]]; then
+  BUILD_PLATFORM='linux'
+else
+  BUILD_PLATFORM='mac'
+fi
+
+echo "Copying $BUILD_PLATFORM/build.sh"
+
+cp "$SOURCE_DIR/scripts/$BUILD_PLATFORM/build.sh" "$BUILD_DIR"
 
 cd "$BUILD_DIR" || exit 1
-echo "Applying pysqlcipher3 setup patch"
-patch < "$SOURCE_DIR/patches/pysqlcipher3_macos.diff"
+
+
+echo "Preparing pysqlcipher3 setup patch"
+pip install -r requirements.txt
+"$SOURCE_DIR/patches/patch-gen.py" --platform "$BUILD_PLATFORM" --version "$LIB_VERSION"
+
+patch < "$SOURCE_DIR/patches/pysqlcipher3.diff"
+
+if [[ $BUILD_OS == 'Linux' ]]; then
+  echo "Copying OpenSSL to build dir"
+  cp -R "$SOURCE_DIR/openssl" "$BUILD_DIR/"
+fi
 
 if [[ -d "$SOURCE_DIR/openssl-macos-arm64" ]]; then
   echo "Copying arm64 OpenSSL"
