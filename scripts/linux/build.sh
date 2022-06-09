@@ -13,7 +13,7 @@ cd openssl || exit 1
 make > /dev/null
 make install_sw > /dev/null
 
-cd "sqlcipher" || exit 1
+cd "$WORKDIR/sqlcipher" || exit 1
 
 echo "Creating SQLCipher amalgamation"
 
