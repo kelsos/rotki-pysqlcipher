@@ -5,9 +5,10 @@ on:
 
 env:
   LIB_VERSION: '2022.6.1'
+  PYTHON_VERSION: '3.9.13'
 
 jobs:
-  build_openssl:
+  build_macos_openssl:
     runs-on: macos-11
     strategy:
       matrix:
@@ -36,7 +37,7 @@ jobs:
               --openssldir=${{ matrix.ARCH.OPENSSLDIR }} \
               darwin64-${{ matrix.ARCH.NAME }}-cc \
               ${{ matrix.ARCH.FLAGS }}
-          
+
           make -j$(sysctl -n hw.logicalcpu)
           make install_sw
         env:
@@ -47,10 +48,10 @@ jobs:
           name: "openssl-macos-${{ matrix.ARCH.ARTIFACT_NAME }}"
           path: artifact/
 
-  build_universal2:
+  build_macos_openssl_universal2:
     runs-on: macos-11
     name: "Build OpenSSL for macOS (universal2)"
-    needs: [ build_openssl ]
+    needs: [build_macos_openssl]
     steps:
       - uses: actions/download-artifact@v3
         with:
@@ -76,12 +77,10 @@ jobs:
           name: "openssl-macos-universal2"
           path: artifact/
 
-
-
-  build_macos:
+  build_wheels_macos:
     name: 'Building pysqlcipher3 wheels for macOS'
     runs-on: macos-11
-    needs: [ build_universal2 ]
+    needs: [build_macos_openssl_universal2]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -89,7 +88,7 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9.13
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
       - uses: actions/download-artifact@v3
         with:
@@ -118,30 +117,33 @@ jobs:
         with:
           path: /tmp/pybuild/wheelhouse/*.whl
 
-  build_linux:
-    name: 'Build on linux'
+  build_wheels_linux:
+    name: 'Building pysqlcipher3 wheels for Linux'
     runs-on: 'ubuntu-18.04'
     steps:
-     - uses: actions/checkout@v3
-       with:
-         submodules: true
-     - name: Set up python
-       uses: actions/setup-python@v3
-       with:
-         python-version: ${{ matrix.python-version }}
-     - name: Set up QEMU
-       uses: docker/setup-qemu-action@v2
-       with:
-         platforms: arm64
-     - name: Install cibuildwheel
-       run: python -m pip install cibuildwheel==2.6.0
-     - name: Build wheels
-       working-directory: /tmp/pybuild/
-       run: python -m cibuildwheel --output-dir wheelhouse
-       env:
-         CIBW_BEFORE_BUILD_LINUX: ./build.sh
-         CIBW_BUILD: cp39-manylinux_*
-         CIBW_ARCHS_LINUX: "native aarch64"
-     - uses: actions/upload-artifact@v3
-       with:
-         path: /tmp/pybuild/wheelhouse/*.whl
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
+      - name: prepare build directory
+        run: ./scripts/prepare.sh
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.6.0
+      - name: Build wheels
+        working-directory: /tmp/pybuild/
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BEFORE_BUILD_LINUX: ./build.sh
+          CIBW_BUILD: cp39-manylinux_*
+          CIBW_ARCHS_LINUX: "native aarch64"
+      - uses: actions/upload-artifact@v3
+        with:
+          path: /tmp/pybuild/wheelhouse/*.whl
