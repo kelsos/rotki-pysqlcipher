@@ -17,12 +17,12 @@ jobs:
             ARTIFACT_NAME: x86-64
             CFLAGS: "-mmacosx-version-min=10.09 -march=core2"
             OPENSSLDIR: "/usr/local/etc/openssl@1.1"
-            FLAGS: no-shared -fPIC -fstack-protector-all
+            FLAGS: no-shared no-asm no-idea no-camellia no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 no-md4 no-ecdh no-sock no-ssl3 no-dsa no-dh no-ec no-ecdsa no-tls1 no-rfc3779 no-whirlpool no-srp no-mdc2 no-ecdh no-engine no-srtp
           - NAME: arm64
             ARTIFACT_NAME: arm64
             CFLAGS: "-mmacosx-version-min=11.0"
             OPENSSLDIR: "/opt/homebrew/etc/openssl@1.1"
-            FLAGS: no-shared enable-rc5 zlib no-asm -fPIC -fstack-protector-all
+            FLAGS: no-shared no-asm no-idea no-camellia no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 no-md4 no-ecdh no-sock no-ssl3 no-dsa no-dh no-ec no-ecdsa no-tls1 no-rfc3779 no-whirlpool no-srp no-mdc2 no-ecdh no-engine no-srtp
     name: "Build OpenSSL for macOS (${{ matrix.ARCH.NAME }})"
     steps:
       - uses: actions/checkout@v3
@@ -147,3 +147,24 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: /tmp/pybuild/wheelhouse/*.whl
+  build_sdist:
+    name: 'Building pysqlcipher3 sdist'
+    runs-on: 'ubuntu-18.04'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      - name: prepare build directory
+        run: ./scripts/prepare.sh
+      - name: Build sdist
+        working-directory: /tmp/pybuild/
+        run: python3 -m pip install --upgrade build && python -m build -s
+      - name: Store artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: /tmp/pybuild/dist/*.tar.gz
