@@ -118,10 +118,10 @@ jobs:
         with:
           path: /tmp/pybuild/wheelhouse/*.whl
 
- build_linux:
-   name: 'Build on linux'
-   runs-on: 'ubuntu-18.04'
-   steps:
+  build_linux:
+    name: 'Build on linux'
+    runs-on: 'ubuntu-18.04'
+    steps:
      - uses: actions/checkout@v3
        with:
          submodules: true
