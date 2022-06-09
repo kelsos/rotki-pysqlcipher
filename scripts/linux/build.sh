@@ -2,17 +2,6 @@
 
 WORKDIR=$PWD
 
-
-if [[ -n "$(command -v yum)" ]]; then
-  echo "Installing tcl using yum"
-  yum -y install tcl
-fi
-
-if [[ -n "$(command -v apt-get)" ]]; then
-  echo "Installing tcl using apt"
-  apt-get install tcl
-fi
-
 echo "🏗️ Building OpenSSL"
 cd openssl || exit 1
 ./config no-shared --prefix=/usr/local/ssl --openssldir=/usr/local/ssl \
@@ -35,6 +24,7 @@ cd "$WORKDIR/sqlcipher" || exit 1
   --disable-shared \
   --enable-static=yes \
   --with-crypto-lib=none \
+  --with-tcl=/usr/lib64/tcl8.5 \
   CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -I/usr/local/ssl/include/" \
   LDFLAGS="/usr/local/ssl/lib/libcrypto.a" > /dev/null
 
