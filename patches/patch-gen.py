@@ -10,8 +10,8 @@ openssl = {
         "include": "./openssl/include/",
     },
     "win": {
-        "lib": "",
-        "include": "",
+        "lib": ".\\openssl",
+        "include": ".\\openssl\\include",
     },
     "linux": {
         "lib": "/usr/local/ssl/lib/",

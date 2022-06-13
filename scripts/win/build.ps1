@@ -1,3 +1,13 @@
+$WORKDIR = $PWD
+$TCLTK='tcltk85-8.5.19-17.tcl85.Win10.x86_64'
+$TCLTK_DIR = "$Env:Temp\$TCLTK"
+
+if ($Env:CI) {
+    echo "::addpath::$TCLTK_DIR\bin"
+} else {
+    $env:Path += ";$TCLTK_DIR\bin"
+}
+
 echo "`nSetting up Visual Studio Dev Shell`n"
 
 $BACKUP_ENV = @()
@@ -32,17 +42,40 @@ if (Get-Command "$vc_env" -errorAction SilentlyContinue)
 }
 
 echo "Building OpenSSL"
-choco install -y activeperl --no-progress
 
-cd openssl
+cd "$WORKDIR\openssl"
 
-perl ./Configure VC-WIN64A no-shared no-asm no-idea no-camellia \
-  no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 \
-  no-md4 no-ecdh no-sock no-ssl3 \
-  no-dsa no-dh no-ec no-ecdsa no-tls1 \
-  no-rfc3779 no-whirlpool no-srp \
+perl ./Configure VC-WIN64A no-shared no-asm no-weak-ssl-ciphers no-idea no-camellia `
+  no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 `
+  no-md4 no-ecdh no-sock no-ssl3 `
+  no-dsa no-dh no-ec no-ecdsa no-tls1 `
+  no-rfc3779 no-whirlpool no-srp `
   no-mdc2 no-ecdh no-engine no-srtp
 
 nmake
 
 echo "OpenSSL Build Complete"
+
+echo "Preparing amalgamation"
+
+cd "$WORKDIR\sqlcipher\"
+
+nmake /f Makefile.msc sqlite3.c
+
+echo "Moving amalgamation to $WORKDIR\amalgamation"
+
+if (-not (Test-Path "$WORKDIR\amalgamation" -PathType Container)) {
+  New-Item -ItemType Directory -Path "$WORKDIR\amalgamation"
+}
+
+Copy-Item sqlite3.c -Destination "$WORKDIR\amalgamation"
+Copy-Item sqlite3.h -Destination "$WORKDIR\amalgamation"
+
+echo "Preparing SQLCipher include directory"
+
+if (-not (Test-Path "$WORKDIR\include\sqlcipher" -PathType Container)) {
+  New-Item -ItemType Directory -Path "$WORKDIR\include\sqlcipher"
+}
+
+Copy-Item sqlite3.h -Destination "$WORKDIR\include\sqlcipher"
+
