@@ -166,7 +166,7 @@ jobs:
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==${{ env.CIBW_VERSION }}
       - name: Build wheels
-        working-directory: /tmp/pybuild/
+        working-directory: ${{ env.TEMP }}\pybuild
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BEFORE_BUILD: Powershell.exe -F ./build.ps1
@@ -174,7 +174,7 @@ jobs:
           CIBW_ARCHS_LINUX: "native"
       - uses: actions/upload-artifact@v3
         with:
-          path: /tmp/pybuild/wheelhouse/*.whl
+          path: ${{ env.TEMP }}\pybuild\wheelhouse\*.whl
 
   build_sdist:
     name: 'Build sdist'
