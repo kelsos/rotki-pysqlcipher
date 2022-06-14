@@ -71,7 +71,7 @@ echo "Preparing amalgamation"
 
 cd "$WORKDIR\sqlcipher\"
 
-nmake /f Makefile.msc sqlite3.c
+nmake /f Makefile.msc sqlite3.c | out-null
 
 echo "Moving amalgamation to $WORKDIR\amalgamation"
 
