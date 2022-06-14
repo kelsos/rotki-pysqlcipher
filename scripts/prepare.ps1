@@ -11,7 +11,7 @@ function ExitOnFailure {
 }
 
 $SOURCE_DIR = $PWD
-$BUILD_DIR = "$Env:Temp\pybuild"
+$BUILD_DIR = "$PWD\build"
 
 $SQLCIPHER_DIR = "$SOURCE_DIR\sqlcipher"
 $PYSQLCIPHER_DIR = "$SOURCE_DIR\pysqlcipher3"
@@ -29,18 +29,7 @@ if (-not (Test-Path $TCLTK_DIR -PathType Container)) {
     ExitOnFailure("Failed to untar tcl/tk")
 }
 
-echo "Copying submodules to $BUILD_DIR"
-
-Copy-Item -Path "$PYSQLCIPHER_DIR" -Destination "$BUILD_DIR" -Recurse -Force
-Copy-Item -Path "$SQLCIPHER_DIR" -Destination "$BUILD_DIR\" -Recurse -Force
-
-echo "Copying win/build.ps1"
-
-Copy-Item "$SOURCE_DIR\scripts\win\build.ps1" -Destination "$BUILD_DIR"
-
 echo "Preparing pysqlcipher3 setup patch"
-
-choco install -y patch --no-progress
 
 if ((-not ($env:VIRTUAL_ENV)) -and (-not ($Env:CI))) {
     if ((-not (Test-Path "$Env:Temp\.venv" -PathType Container))) {
@@ -53,16 +42,28 @@ if ((-not ($env:VIRTUAL_ENV)) -and (-not ($Env:CI))) {
 
     echo "Activating .venv"
     & $Env:Temp\.venv\Scripts\activate.ps1
-    ExitOnFailure("Failed to activate rotki VirtualEnv")
 }
 
 cd "$SOURCE_DIR\patches"
 pip install -r requirements.txt
 python patch-gen.py --platform win
 
-cd "$BUILD_DIR"
+cd "$PYSQLCIPHER_DIR"
 
-patch -l -i "$SOURCE_DIR\patches\pysqlcipher3.diff"
+git reset --hard HEAD
+echo "Patching Readme/License/Manifest"
+git apply --reject --whitespace=fix "$SOURCE_DIR\patches\pysqlcipher3.patch"
+echo "Patching setup.py"
+git apply --reject --whitespace=fix "$SOURCE_DIR\patches\pysqlcipher3.diff"
+echo "Copying pysqlcipher3"
+Copy-Item -Path "$PYSQLCIPHER_DIR" -Destination "$BUILD_DIR" -Recurse -Force
+git reset --hard HEAD
+
+echo "Copying SQLCipher"
+Copy-Item -Path "$SQLCIPHER_DIR" -Destination "$BUILD_DIR\" -Recurse -Force
+
+echo "Copying win\build.ps1"
+Copy-Item "$SOURCE_DIR\scripts\win\build.ps1" -Destination "$BUILD_DIR"
 
 echo "Copying OpenSSL to build dir"
 Copy-Item -Path "$SOURCE_DIR\openssl" -Destination "$BUILD_DIR\" -Recurse -Force

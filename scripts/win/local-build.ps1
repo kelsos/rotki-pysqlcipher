@@ -1,3 +1,5 @@
+$BUILD_DIR = $PWD
+
 function ExitOnFailure {
     param([string]$ExitMessage)
     if (-not ($LASTEXITCODE -eq 0)) {
@@ -26,6 +28,6 @@ $env:CIBW_BUILD = 'cp39-*'
 $env:CIBW_ARCHS = 'native'
 $env:CIBW_BUILD_VERBOSITY = 1
 
-cd $Env:Temp\pybuild
+cd $BUILD_DIR\build
 
 python -m cibuildwheel --output-dir wheelhouse --platform windows

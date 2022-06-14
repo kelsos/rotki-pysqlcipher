@@ -7,6 +7,8 @@ env:
   LIB_VERSION: '2022.6.1'
   PYTHON_VERSION: '3.9.13'
   CIBW_VERSION: '2.6.1'
+  CIBW_BUILD: 'cp39-*'
+  CIBW_SKIP: '*-musllinux_*'
 
 jobs:
   build_macos_openssl:
@@ -18,12 +20,12 @@ jobs:
             ARTIFACT_NAME: x86-64
             CFLAGS: "-mmacosx-version-min=10.09 -march=core2"
             OPENSSLDIR: "/usr/local/etc/openssl@1.1"
-            FLAGS: no-shared no-asm no-idea no-camellia no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 no-md4 no-ecdh no-sock no-ssl3 no-dsa no-dh no-ec no-ecdsa no-tls1 no-rfc3779 no-whirlpool no-srp no-mdc2 no-ecdh no-engine no-srtp
+            FLAGS: no-shared no-asm no-idea no-camellia no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 no-md4 no-ecdh no-sock no-ssl3 no-dsa no-dh no-ec no-ecdsa no-tls1 no-rfc3779 no-whirlpool no-srp no-mdc2 no-ecdh no-engine no-srtp no-weak-ssl-ciphers
           - NAME: arm64
             ARTIFACT_NAME: arm64
             CFLAGS: "-mmacosx-version-min=11.0"
             OPENSSLDIR: "/opt/homebrew/etc/openssl@1.1"
-            FLAGS: no-shared no-asm no-idea no-camellia no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 no-md4 no-ecdh no-sock no-ssl3 no-dsa no-dh no-ec no-ecdsa no-tls1 no-rfc3779 no-whirlpool no-srp no-mdc2 no-ecdh no-engine no-srtp
+            FLAGS: no-shared no-asm no-idea no-camellia no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 no-md4 no-ecdh no-sock no-ssl3 no-dsa no-dh no-ec no-ecdsa no-tls1 no-rfc3779 no-whirlpool no-srp no-mdc2 no-ecdh no-engine no-srtp no-weak-ssl-ciphers
     name: "Build OpenSSL for macOS (${{ matrix.ARCH.NAME }})"
     steps:
       - uses: actions/checkout@v3
@@ -111,7 +113,6 @@ jobs:
         working-directory: /tmp/pybuild
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
-          CIBW_BUILD: cp39-*
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           CIBW_BEFORE_BUILD_MACOS: ./build.sh
       - uses: actions/upload-artifact@v3
@@ -143,7 +144,6 @@ jobs:
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BEFORE_BUILD_LINUX: ./build.sh
-          CIBW_BUILD: cp39-manylinux_*
           CIBW_ARCHS_LINUX: "native aarch64"
       - uses: actions/upload-artifact@v3
         with:
@@ -166,15 +166,14 @@ jobs:
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==${{ env.CIBW_VERSION }}
       - name: Build wheels
-        working-directory: ${{ env.TEMP }}\pybuild
+        working-directory: pybuild
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BEFORE_BUILD: Powershell.exe -F ./build.ps1
-          CIBW_BUILD: cp39-*
           CIBW_ARCHS_LINUX: "native"
       - uses: actions/upload-artifact@v3
         with:
-          path: ${{ env.TEMP }}\pybuild\wheelhouse\*.whl
+          path: pybuild\wheelhouse\*.whl
 
   build_sdist:
     name: 'Build sdist'

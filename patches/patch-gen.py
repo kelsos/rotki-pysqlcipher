@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: ISO-8859-1 -*-
 import sys
 from pathlib import Path
 
@@ -51,13 +52,13 @@ def generate_patch(platform, version: str):
         print(f'Removing old diff')
         diff.unlink()
 
-    with open('pysqlcipher3.diff.j2') as f:
-        template = Template(f.read())
+    with open('pysqlcipher3.diff.j2', encoding="iso-8859-1") as f:
+        template = Template(f.read(), keep_trailing_newline=True)
         openssl_paths = openssl.get(platform)
         lib = openssl_paths.get('lib')
         include = openssl_paths.get('include')
 
-        with open('pysqlcipher3.diff', 'w') as output:
+        with open('pysqlcipher3.diff', 'w', encoding="iso-8859-1") as output:
             output.write(
                 template.render(
                     version=version,

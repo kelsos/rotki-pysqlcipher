@@ -15,7 +15,7 @@ fi
 
 echo "🏗️ Building OpenSSL"
 cd openssl || exit 1
-./config no-shared no-asm no-idea no-camellia \
+./config no-shared no-asm no-idea no-camellia no-weak-ssl-ciphers \
   no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 \
   no-md4 no-ecdh no-sock no-ssl3 \
   no-dsa no-dh no-ec no-ecdsa no-tls1 \

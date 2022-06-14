@@ -90,4 +90,4 @@ if (-not (Test-Path "$WORKDIR\include\sqlcipher" -PathType Container)) {
 
 Copy-Item sqlite3.h -Destination "$WORKDIR\include\sqlcipher"
 
-$env:OPENSSL_CONF = "$env:Temp\pybuild\openssl"
+$env:OPENSSL_CONF = "$WORKDIR\openssl"
