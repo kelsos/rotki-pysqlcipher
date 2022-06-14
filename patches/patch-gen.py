@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import sys
 from pathlib import Path
 
 import click
+import datetime
 from jinja2 import Template
 
 openssl = {
@@ -20,6 +22,15 @@ openssl = {
 }
 
 
+def default_version() -> str:
+    strf = '%Y.%-m.1'
+    if sys.platform == 'win32':
+        strf = '%Y.%#m.1'
+
+    today = datetime.date.today()
+    return today.strftime(strf)
+
+
 @click.command()
 @click.option(
     '--platform',
@@ -28,11 +39,16 @@ openssl = {
         case_sensitive=True,
     )
 )
-@click.option('--version')
+@click.option(
+    '--version',
+    envvar='LIB_VERSION',
+    default=default_version()
+)
 def generate_patch(platform, version: str):
     diff = Path('pysqlcipher3.diff')
 
     if diff.exists():
+        print(f'Removing old diff')
         diff.unlink()
 
     with open('pysqlcipher3.diff.j2') as f:

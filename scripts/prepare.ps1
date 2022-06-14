@@ -58,7 +58,7 @@ if ((-not ($env:VIRTUAL_ENV)) -and (-not ($Env:CI))) {
 
 cd "$SOURCE_DIR\patches"
 pip install -r requirements.txt
-python patch-gen.py --platform win --version "$Env:LIB_VERSION"
+python patch-gen.py --platform win
 
 cd "$BUILD_DIR"
 

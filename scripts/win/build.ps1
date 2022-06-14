@@ -2,6 +2,17 @@ $WORKDIR = $PWD
 $TCLTK='tcltk85-8.5.19-17.tcl85.Win10.x86_64'
 $TCLTK_DIR = "$Env:Temp\$TCLTK"
 
+
+function ExitOnFailure {
+    param([string]$ExitMessage)
+    if (-not ($LASTEXITCODE -eq 0)) {
+        echo "`n------------`n"
+        echo "$ExitMessage"
+        echo "`n------------`n"
+        exit 1;
+    }
+}
+
 if ($Env:CI) {
     echo "::addpath::$TCLTK_DIR\bin"
 } else {
@@ -79,3 +90,4 @@ if (-not (Test-Path "$WORKDIR\include\sqlcipher" -PathType Container)) {
 
 Copy-Item sqlite3.h -Destination "$WORKDIR\include\sqlcipher"
 
+$env:OPENSSL_CONF = "$env:Temp\pybuild\openssl"

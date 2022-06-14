@@ -1,15 +1,11 @@
-diff --git a/LICENSE b/LICENSE
---- a/LICENSE	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
-+++ b/LICENSE	(date 1654776727376)
-@@ -1,3 +1,4 @@
-+Copyright (C) Rotki Solutions GmbH <info@rotki.com>
- Copyright (C) David Riggleman <davidriggleman@gmail.com>
- Copyright (C) Kali Kaneko <kali@futeisha.org>
- Copyright (c) 2004-2007 Gerhard Häring
-
+Index: setup.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
 diff --git a/setup.py b/setup.py
 --- a/setup.py	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
-+++ b/setup.py	(date 1654781816862)
++++ b/setup.py	(date 1655165956811)
 @@ -1,6 +1,7 @@
  # -*- coding: ISO-8859-1 -*-
  # setup.py: the distutils script
@@ -36,8 +32,12 @@ diff --git a/setup.py b/setup.py
  
  # define sqlite sources
  sources = [os.path.join("src", "python" + str(sys.version_info[0]), source)
-@@ -69,17 +69,10 @@
-     quote = '"' if sys.platform != 'win32' else '\\"'
+@@ -66,20 +66,13 @@
+ 
+ 
+ def quote_argument(arg):
+-    quote = '"' if sys.platform != 'win32' else '\\"'
++    quote = '"'  # if sys.platform != 'win32' else '\\"' # note needed for python 3.9
      return quote + arg + quote
  
 +
@@ -55,7 +55,30 @@ diff --git a/setup.py b/setup.py
  class AmalgationLibSQLCipherBuilder(build_ext):
      description = "Builds a C extension using a sqlcipher amalgamation"
  
-@@ -153,18 +146,20 @@
+@@ -127,15 +120,17 @@
+                 raise RuntimeError(error_message)
+ 
+             openssl = os.path.dirname(os.path.dirname(openssl_conf))
+-            openssl_lib_path = os.path.join(openssl, "lib")
++            openssl_lib_path = os.path.join(openssl, "\\")
+ 
+             # Configure the compiler
+             ext.include_dirs.append(os.path.join(openssl, "include"))
+             ext.define_macros.append(("inline", "__inline"))
+ 
+             # Configure the linker
+-            ext.extra_link_args.append("libeay32.lib")
+-            ext.extra_link_args.append('/LIBPATH:' + openssl_lib_path)
++            ext.extra_link_args.append("libcrypto.lib")
++            ext.extra_link_args.append("User32.lib")
++            ext.extra_link_args.append("advapi32.lib")
++            ext.extra_link_args.append(f'/LIBPATH{openssl_lib_path}')
+         else:
+             ext.extra_link_args.append("-lcrypto")
+ 
+@@ -151,20 +146,22 @@
+ 
+ def get_setup_args():
      return dict(
 -        name=PACKAGE_NAME,
 +        name=f'rotki-{PACKAGE_NAME}',
@@ -81,7 +104,7 @@ diff --git a/setup.py b/setup.py
              define_macros=define_macros)
          ],
          classifiers=[
-@@ -179,8 +174,7 @@
+@@ -179,8 +176,7 @@
              "Topic :: Database :: Database Engines/Servers",
              "Topic :: Software Development :: Libraries :: Python Modules"],
          cmdclass={
@@ -91,21 +114,25 @@ diff --git a/setup.py b/setup.py
          }
      )
  
-@@ -191,5 +185,6 @@
+@@ -191,5 +187,6 @@
      except BaseException as ex:
          log.info(str(ex))
  
 +
  if __name__ == "__main__":
      main()
-
+Index: README.rst
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
 diff --git a/README.rst b/README.rst
 --- a/README.rst	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
-+++ b/README.rst	(date 1654776727376)
++++ b/README.rst	(date 1655165855426)
 @@ -1,7 +1,12 @@
  pysqlcipher3
  ============
-
+ 
 -**Note: this project is no longer being actively maintained. Security vulnerabilities may exist in this code. Use at your own risk.**
 +.. note::
 +
@@ -113,25 +140,44 @@ diff --git a/README.rst b/README.rst
 +  with https://github.com/rotki/rotki. The package is build against python 3.9 and
 +  statically linked against SQLCipher 4.x amalgamation. The purpose is to provide
 +  pre-build wheels for the platforms that rotki supports.
-
+ 
  This library is a fork of pysqlcipher targeted for use with Python 3, 
  although support for Python 2 is still maintained. It is still in the 
 @@ -16,6 +21,8 @@
-
+ 
  Python 3 packaging for SQLCipher (c) 2015 David Riggleman
-
+ 
 +SQLCipher 4.x static linking and packaging (c) 2022 Rotki Solutions GmbH
 +
  Usage
  -----
  You have to pass the ``PRAGMA key`` before doing any operations::
+Index: MANIFEST.in
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
 diff --git a/MANIFEST.in b/MANIFEST.in
 --- a/MANIFEST.in	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
-+++ b/MANIFEST.in	(date 1654776727376)
-@@ -7,3 +7,5 @@
++++ b/MANIFEST.in	(date 1655165855465)
+@@ -7,3 +7,6 @@
  include lib/test/*/*
-
+ 
  global-exclude *~ *.pyc
-+exclude include
-+exclude openssl*
-
++global-exclude openssl*
++global-exclude include
++global-exclude sqlcipher
+\ No newline at end of file
+Index: LICENSE
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/LICENSE b/LICENSE
+--- a/LICENSE	(revision 1f1b703b9e35205946c820e735f58799e1b72d2d)
++++ b/LICENSE	(date 1655165525123)
+@@ -1,3 +1,4 @@
++Copyright (C) Rotki Solutions GmbH <info@rotki.com>
+ Copyright (C) David Riggleman <davidriggleman@gmail.com>
+ Copyright (C) Kali Kaneko <kali@futeisha.org>
+ Copyright (c) 2004-2007 Gerhard Häring
