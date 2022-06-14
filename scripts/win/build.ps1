@@ -90,4 +90,9 @@ if (-not (Test-Path "$WORKDIR\include\sqlcipher" -PathType Container)) {
 
 Copy-Item sqlite3.h -Destination "$WORKDIR\include\sqlcipher"
 
-$env:OPENSSL_CONF = "$WORKDIR\openssl"
+if ($Env:CI) {
+    echo "OPENSSL_CONF=$WORKDIR\openssl" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+} else {
+    $env:OPENSSL_CONF = "$WORKDIR\openssl"
+}
+
