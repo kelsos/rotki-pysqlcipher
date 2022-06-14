@@ -1,20 +1,10 @@
 #!/usr/bin/env bash
 
 SOURCE_DIR=$PWD
-BUILD_DIR="/tmp/pybuild"
+BUILD_DIR="$SOURCE_DIR/build"
 
 SQLCIPHER_DIR="$SOURCE_DIR/sqlcipher"
 PYSQLCIPHER_DIR="$SOURCE_DIR/pysqlcipher3"
-
-if [[ -d "$BUILD_DIR" ]]; then
-  echo "$BUILD_DIR already exists, cleaning up"
-  rm -rf $BUILD_DIR
-fi
-
-echo "Copying submodules to $BUILD_DIR"
-
-cp -R "$PYSQLCIPHER_DIR" "$BUILD_DIR"
-cp -R "$SQLCIPHER_DIR" "$BUILD_DIR/"
 
 BUILD_OS=$(uname -s)
 
@@ -24,19 +14,35 @@ else
   BUILD_PLATFORM='mac'
 fi
 
-echo "Copying $BUILD_PLATFORM/build.sh"
-
-cp "$SOURCE_DIR/scripts/$BUILD_PLATFORM/build.sh" "$BUILD_DIR"
+if [[ -d "$BUILD_DIR" ]]; then
+  echo "$BUILD_DIR already exists, cleaning up"
+  rm -rf $BUILD_DIR
+fi
 
 echo "Preparing pysqlcipher3 setup patch"
 
-cd "$SOURCE_DIR/patches" || exit
+cd "$SOURCE_DIR/patches" || exit 1
 pip install -r requirements.txt
-./patch-gen.py --platform "$BUILD_PLATFORM" --version "$LIB_VERSION"
+./patch-gen.py --platform "$BUILD_PLATFORM"
 
-cd "$BUILD_DIR" || exit 1
 
-patch < "$SOURCE_DIR/patches/pysqlcipher3.diff"
+cd "$PYSQLCIPHER_DIR" || exit 1
+git reset --hard HEAD
+echo "Patching Readme/License/Manifest"
+git apply --reject --whitespace=fix "$SOURCE_DIR/patches/pysqlcipher3.patch"
+echo "Patching setup.py"
+git apply --reject --whitespace=fix "$SOURCE_DIR/patches/pysqlcipher3.diff"
+echo "Copying pysqlcipher3"
+cp -R "$PYSQLCIPHER_DIR" "$BUILD_DIR"
+git reset --hard HEAD
+
+echo "Copying SQLCipher to $BUILD_DIR"
+
+cp -R "$SQLCIPHER_DIR" "$BUILD_DIR/"
+
+echo "Copying $BUILD_PLATFORM/build.sh"
+
+cp "$SOURCE_DIR/scripts/$BUILD_PLATFORM/build.sh" "$BUILD_DIR"
 
 if [[ $BUILD_OS == 'Linux' ]]; then
   echo "Copying OpenSSL to build dir"

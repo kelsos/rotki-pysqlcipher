@@ -13,9 +13,19 @@ if [[ -n "$(command -v apt-get)" ]]; then
   apt-get install tcl-dev
 fi
 
+echo "Preparing for arch $AUDITWHEEL_ARCH"
+
+if [[ $AUDITWHEEL_ARCH == "x86_64" ]]; then
+  OPENSSL_CONFIGURATION='linux-x86_64'
+elif [[ $AUDITWHEEL_ARCH == "aarch64" ]]; then
+  OPENSSL_CONFIGURATION='linux-aarch64'
+else
+  exit 1
+fi
+
 echo "🏗️ Building OpenSSL"
 cd openssl || exit 1
-./config no-shared no-asm no-idea no-camellia no-weak-ssl-ciphers \
+./Configure $OPENSSL_CONFIGURATION no-shared no-asm no-idea no-camellia no-weak-ssl-ciphers \
   no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 \
   no-md4 no-ecdh no-sock no-ssl3 \
   no-dsa no-dh no-ec no-ecdsa no-tls1 \
@@ -36,9 +46,7 @@ cd "$WORKDIR/sqlcipher" || exit 1
   --enable-tempstore=yes \
   --disable-shared \
   --enable-static=yes \
-  --with-crypto-lib=none \
-  CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -I/usr/local/ssl/include/" \
-  LDFLAGS="/usr/local/ssl/lib/libcrypto.a" > /dev/null
+  --with-crypto-lib=none > /dev/null
 
 make sqlite3.c > /dev/null
 

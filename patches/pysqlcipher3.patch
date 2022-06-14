@@ -18,8 +18,8 @@ diff --git a/README.rst b/README.rst
 +  statically linked against SQLCipher 4.x amalgamation. The purpose is to provide
 +  pre-build wheels for the platforms that rotki supports.
  
- This library is a fork of pysqlcipher targeted for use with Python 3, 
- although support for Python 2 is still maintained. It is still in the 
+ This library is a fork of pysqlcipher targeted for use with Python 3,
+ although support for Python 2 is still maintained. It is still in the
 Index: MANIFEST.in
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
