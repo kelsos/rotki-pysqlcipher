@@ -150,7 +150,7 @@ jobs:
           path: /tmp/pybuild/wheelhouse/*.whl
 
   build_wheels_windows:
-    name: 'Building wheels for Windows'
+    name: 'Buildwheels for Windows'
     runs-on: 'windows-2019'
     steps:
       - uses: actions/checkout@v3
@@ -177,7 +177,7 @@ jobs:
           path: /tmp/pybuild/wheelhouse/*.whl
 
   build_sdist:
-    name: 'Building pysqlcipher3 sdist'
+    name: 'Build sdist'
     runs-on: 'ubuntu-18.04'
     steps:
       - uses: actions/checkout@v3
