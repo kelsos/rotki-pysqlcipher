@@ -171,7 +171,7 @@ jobs:
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BEFORE_BUILD: Powershell.exe -F ./build.ps1
-          CIBW_ARCHS_LINUX: "native"
+          CIBW_ARCHS_WINDOWS: "native"
       - uses: actions/upload-artifact@v3
         with:
           path: build\wheelhouse\*.whl
