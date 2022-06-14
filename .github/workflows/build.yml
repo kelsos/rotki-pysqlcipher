@@ -9,6 +9,7 @@ env:
   CIBW_VERSION: '2.6.1'
   CIBW_BUILD: 'cp39-*'
   CIBW_SKIP: '*-musllinux_*'
+  CIBW_BUILD_VERBOSITY: 1
 
 jobs:
   build_macos_openssl:
@@ -110,14 +111,14 @@ jobs:
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==${{ env.CIBW_VERSION }}
       - name: Build wheels
-        working-directory: /tmp/pybuild
+        working-directory: build
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_ARCHS_MACOS: x86_64 arm64 universal2
           CIBW_BEFORE_BUILD_MACOS: ./build.sh
       - uses: actions/upload-artifact@v3
         with:
-          path: /tmp/pybuild/wheelhouse/*.whl
+          path: build/wheelhouse/*.whl
 
   build_wheels_linux:
     name: 'Build wheels for Linux'
@@ -190,9 +191,9 @@ jobs:
       - name: prepare build directory
         run: ./scripts/prepare.sh
       - name: Build sdist
-        working-directory: /tmp/pybuild/
+        working-directory: build
         run: python3 -m pip install --upgrade build && python -m build -s
       - name: Store artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: /tmp/pybuild/dist/*.tar.gz
+          path: build/dist/*.tar.gz
