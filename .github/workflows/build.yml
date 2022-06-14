@@ -150,7 +150,7 @@ jobs:
           path: /tmp/pybuild/wheelhouse/*.whl
 
   build_wheels_windows:
-    name: 'Buildwheels for Windows'
+    name: 'Build wheels for Windows'
     runs-on: 'windows-2019'
     steps:
       - uses: actions/checkout@v3
@@ -164,7 +164,7 @@ jobs:
       - name: prepare build directory
         run: ./scripts/prepare.ps1
       - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel====${{ env.CIBW_VERSION }}
+        run: python -m pip install cibuildwheel==${{ env.CIBW_VERSION }}
       - name: Build wheels
         working-directory: /tmp/pybuild/
         run: python -m cibuildwheel --output-dir wheelhouse
