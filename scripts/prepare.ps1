@@ -68,5 +68,7 @@ Copy-Item "$SOURCE_DIR\scripts\win\build.ps1" -Destination "$BUILD_DIR"
 echo "Copying OpenSSL to build dir"
 Copy-Item -Path "$SOURCE_DIR\openssl" -Destination "$BUILD_DIR\" -Recurse -Force
 
+echo "OPENSSL_CONF=$BUILD_DIR\openssl" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+
 echo $BUILD_DIR
 

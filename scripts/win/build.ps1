@@ -63,7 +63,7 @@ perl ./Configure VC-WIN64A no-shared no-asm no-weak-ssl-ciphers no-idea no-camel
   no-rfc3779 no-whirlpool no-srp `
   no-mdc2 no-ecdh no-engine no-srtp
 
-nmake
+nmake | out-null
 
 echo "OpenSSL Build Complete"
 
@@ -89,9 +89,4 @@ if (-not (Test-Path "$WORKDIR\include\sqlcipher" -PathType Container)) {
 }
 
 Copy-Item sqlite3.h -Destination "$WORKDIR\include\sqlcipher"
-
-$env:OPENSSL_CONF = "$WORKDIR\openssl"
-echo "OPENSSL_CONF is set at $env:OPENSSL_CONF"
-[System.Environment]::SetEnvironmentVariable('OPENSSL_CONF',"$WORKDIR\openssl")
-echo "OPENSSL_CONF is set at $env:OPENSSL_CONF"
 
